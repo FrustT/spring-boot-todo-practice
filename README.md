@@ -3,11 +3,11 @@
 - [x] Task Controller
 - [x] Task Entity
 - [x] Task CRUD
-- [ ] Task data initialization test
-- [ ] User Controller
-- [ ] User Entity
-- [ ] User CRUD
-- [ ] User data init with import.sql
+- [x] Task data initialization test
+- [x] User Controller
+- [x] User Entity
+- [x] User CRUD
+- [x] User data init with import.sql
 - [ ] Task-User relationship
 - [ ] .
 
