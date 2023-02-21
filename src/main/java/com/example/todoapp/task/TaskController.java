@@ -1,33 +1,45 @@
 package com.example.todoapp.task;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/tasks")
-@AllArgsConstructor
 public class TaskController {
 
-    private TaskService taskService;
+    @Autowired
+    private ITaskService taskService;
 
-    @GetMapping
-    public String getTasks(){
-        return taskService.listUsers();
+    public TaskController(ITaskService taskService) {
+        this.taskService = taskService;
     }
 
-    @PostMapping
-    public String postTask(){
-        return "posted";
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    public List<Task> getTasks() {
+        return taskService.listTasks();
     }
 
-    @PutMapping
-    public String putTask(){
-        return "updated";
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public Task getTask(@PathVariable String id) {
+        return taskService.getTask(id);
     }
 
-    @DeleteMapping
-    public String deleteTask(){
-        return "deleted";
+    @RequestMapping(method = RequestMethod.POST, value = "/addtask")
+    public ResponseEntity<?> addTask(@RequestBody Task task) {
+        return taskService.addTask(task);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+    public ResponseEntity<?> updateTask(@PathVariable("id") String id, @RequestBody Task task) {
+        return taskService.updateTask(id, task);
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
+    public ResponseEntity<?> deleteTask(@PathVariable("id") String id) {
+        return taskService.deleteTask(id);
     }
 
 }
