@@ -1,32 +1,38 @@
 package com.example.todoapp.task;
 
 import lombok.AllArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/v1/tasks")
-@AllArgsConstructor
 public class TaskController {
 
+    @Autowired
     private TaskService taskService;
 
-    @GetMapping
-    public String getTasks(){
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/")
+    public String getTasks() {
         return taskService.listUsers();
     }
 
-    @PostMapping
-    public String postTask(){
+    @RequestMapping(method = RequestMethod.POST, value = "/addTask")
+    public String postTask() {
         return "posted";
     }
 
-    @PutMapping
-    public String putTask(){
+    @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
+    public String putTask() {
         return "updated";
     }
 
-    @DeleteMapping
-    public String deleteTask(){
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
+    public String deleteTask() {
         return "deleted";
     }
 
