@@ -1,6 +1,9 @@
 package com.example.todoapp.task;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,22 +18,27 @@ public class TaskController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
-    public String getTasks() {
+    public List<Task> getTasks() {
         return taskService.listTasks();
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/addTask")
-    public String addTask(@RequestBody Task task) {
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public Task getTask(@PathVariable String id) {
+        return taskService.getTask(id);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/addtask")
+    public ResponseEntity<?> addTask(@RequestBody Task task) {
         return taskService.addTask(task);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
-    public String updateTask(@PathVariable("id") String id) {
-        return taskService.updateTask(id);
+    public ResponseEntity<?> updateTask(@PathVariable("id") String id, @RequestBody Task task) {
+        return taskService.updateTask(id, task);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
-    public String deleteTask(@PathVariable("id") String id) {
+    public ResponseEntity<?> deleteTask(@PathVariable("id") String id) {
         return taskService.deleteTask(id);
     }
 

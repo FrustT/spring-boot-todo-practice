@@ -1,15 +1,19 @@
 package com.example.todoapp.task;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
 public interface ITaskService {// TODO: change return types
 
-    String listTasks();
+    List<Task> listTasks();
 
-    String getTask(String id);
+    Task getTask(String id);
 
-    String addTask(Task task);
+    ResponseEntity<?> addTask(Task task);
 
-    String updateTask(String id);
+    ResponseEntity<?> updateTask(String id, Task task);
 
-    String deleteTask(String id);
+    ResponseEntity<?> deleteTask(String id);
 
 }
