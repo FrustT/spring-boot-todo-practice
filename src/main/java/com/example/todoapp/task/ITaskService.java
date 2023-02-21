@@ -4,16 +4,18 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-public interface ITaskService {// TODO: change return types
+public interface ITaskService {
 
     List<Task> listTasks();
 
-    Task getTask(String id);
+    Task getTask(Long id);
 
     ResponseEntity<?> addTask(Task task);
 
-    ResponseEntity<?> updateTask(String id, Task task);
+    ResponseEntity<?> updateTask(Long id, Task task);
 
-    ResponseEntity<?> deleteTask(String id);
+    ResponseEntity<?> deleteTask(Long id);
+
+    ResponseEntity<?> deleteListOfTasks(List<Task> tasks);
 
 }

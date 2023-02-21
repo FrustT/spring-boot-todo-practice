@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestAttribute;
 
 @Service
 public class TaskService implements ITaskService {
@@ -29,18 +28,18 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public ResponseEntity<?> deleteTask(String id) {
+    public ResponseEntity<?> deleteTask(Long id) {
         taskRepository.delete(getTask(id));
         return ResponseEntity.ok().build();
     }
 
     @Override
-    public Task getTask(String id) {
-        return taskRepository.findById(Long.parseLong(id)).get();
+    public Task getTask(Long id) {
+        return taskRepository.findById(id).get();
     }
 
     @Override
-    public ResponseEntity<?> updateTask(String id, Task task) {
+    public ResponseEntity<?> updateTask(Long id, Task task) {
         Task oldTask = getTask(id);
         oldTask.setTitle(task.getTitle());
         oldTask.setDescription(task.getDescription());
@@ -48,6 +47,12 @@ public class TaskService implements ITaskService {
         oldTask.setDueDate(task.getDueDate());
         oldTask.setCompletedDate(task.getCompletedDate());
         taskRepository.save(oldTask);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<?> deleteListOfTasks(List<Task> tasks) {
+        taskRepository.deleteAll(tasks);
         return ResponseEntity.ok().build();
     }
 
