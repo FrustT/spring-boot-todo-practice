@@ -1,4 +1,4 @@
-package user;
+package com.example.todoapp.user;
 
 import java.util.List;
 
@@ -12,11 +12,13 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table
+@Table(name = "users")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -26,5 +28,5 @@ public class User {
     private String name;
     private String email;
     private String password;
-    private List<Task> tasks;
+
 }

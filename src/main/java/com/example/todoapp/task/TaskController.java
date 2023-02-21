@@ -14,27 +14,27 @@ public class TaskController {
 
     private ITaskService taskService;
 
-    @GetMapping("/")
+    @GetMapping
     public List<Task> getTasks() {
         return taskService.listTasks();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public Task getTask(@PathVariable Long id) {
         return taskService.getTask(id);
     }
 
-    @PostMapping("/addtask")
+    @PostMapping
     public ResponseEntity<?> addTask(@RequestBody Task task) {
         return taskService.addTask(task);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<?> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
         return taskService.updateTask(id, task);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<?> deleteTask(@PathVariable("id") Long id) {
         return taskService.deleteTask(id);
     }
