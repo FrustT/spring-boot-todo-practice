@@ -1,7 +1,5 @@
 package com.example.todoapp.task;
 
-import lombok.AllArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,30 +8,30 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     @Autowired
-    private TaskService taskService;
+    private ITaskService taskService;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(ITaskService taskService) {
         this.taskService = taskService;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/")
     public String getTasks() {
-        return taskService.listUsers();
+        return taskService.listTasks();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/addTask")
-    public String postTask() {
-        return "posted";
+    public String addTask(@RequestBody Task task) {
+        return taskService.addTask(task);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/{id}")
-    public String putTask() {
-        return "updated";
+    public String updateTask(@PathVariable("id") String id) {
+        return taskService.updateTask(id);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
-    public String deleteTask() {
-        return "deleted";
+    public String deleteTask(@PathVariable("id") String id) {
+        return taskService.deleteTask(id);
     }
 
 }
