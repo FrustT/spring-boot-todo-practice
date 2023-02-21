@@ -11,3 +11,8 @@
 - [ ] Task-User relationship
 - [ ] .
 
+- - -
+
+## TODO 
+
+- `api/user` works but `api/user/` does not
