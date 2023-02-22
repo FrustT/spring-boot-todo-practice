@@ -7,11 +7,17 @@
 - [x] User Controller
 - [x] User Entity
 - [x] User CRUD
-- [x] User data init with import.sql
+- [ ] User data init with import.sql
 - [ ] Task-User relationship
-- [ ] .
+- [x] Authentication init (Basic Auth)
+- [ ] Authentication init (JWT Auth)
+- [ ] Authentication is completed
+- [x] Authorization init (permits all routes for now)
+- [ ] Authorization is completed
+
 
 - - -
+
 
 ## TODO 
 
