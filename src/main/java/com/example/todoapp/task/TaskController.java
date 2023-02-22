@@ -1,7 +1,5 @@
 package com.example.todoapp.task;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,12 +13,12 @@ public class TaskController {
     private ITaskService taskService;
 
     @GetMapping
-    public List<Task> getTasks() {
+    public ResponseEntity<?> getTasks() {
         return taskService.listTasks();
     }
 
     @GetMapping("{id}")
-    public Task getTask(@PathVariable Long id) {
+    public ResponseEntity<?> getTask(@PathVariable Long id) {
         return taskService.getTask(id);
     }
 
@@ -32,6 +30,12 @@ public class TaskController {
     @PutMapping("{id}")
     public ResponseEntity<?> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
         return taskService.updateTask(id, task);
+    }
+
+    @PutMapping("{taskId}/assign/{userId}")
+    public ResponseEntity<?> assignUserToTask(@PathVariable("taskId") Long taskId,
+            @PathVariable("userId") Long userId) {
+        return taskService.assignUserToTask(taskId, userId);
     }
 
     @DeleteMapping("{id}")

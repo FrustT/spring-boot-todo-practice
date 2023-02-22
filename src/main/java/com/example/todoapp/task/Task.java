@@ -2,10 +2,14 @@ package com.example.todoapp.task;
 
 import java.time.LocalDate;
 
+import com.example.todoapp.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -30,5 +34,8 @@ public class Task {
     private boolean completed;
     private LocalDate dueDate;
     private LocalDate completedDate;
+    @ManyToOne
+    @JsonIgnoreProperties("tasks")
+    private User owner;
 
 }
