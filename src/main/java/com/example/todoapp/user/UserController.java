@@ -1,6 +1,6 @@
 package com.example.todoapp.user;
 
-import java.util.List;
+import com.example.todoapp.task.Task;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.todoapp.task.ITaskService;
-import com.example.todoapp.task.Task;
-
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -25,13 +22,23 @@ public class UserController {
     private IUserService userService;
 
     @GetMapping
-    public List<User> getUsers() {
+    public ResponseEntity<?> getUsers() {
         return userService.getUsers();
     }
 
     @GetMapping("{id}")
-    public User getUser(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
         return userService.getUser(id);
+    }
+
+    @GetMapping("{id}/tasks")
+    public ResponseEntity<?> getTasksOfUser(@PathVariable("id") Long id) {
+        return userService.getTasksOfUser(id);
+    }
+
+    @GetMapping("/{userId}/task/{taskId}")
+    public ResponseEntity<?> getTaskOfUser(@PathVariable("userId") Long userId, @PathVariable("taskId") Long taskId) {
+        return userService.getTaskOfUser(userId, taskId);
     }
 
     @PostMapping
@@ -39,14 +46,36 @@ public class UserController {
         return userService.addUser(user);
     }
 
+    @PostMapping("/{userId}/task")
+    public ResponseEntity<?> addTaskToUser(@PathVariable("userId") Long userId, @RequestBody Task task) {
+        return userService.addTaskToUser(userId, task);
+    }
+
     @PutMapping("{id}")
     public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody User user) {
         return userService.updateUser(id, user);
     }
 
+    @PutMapping("/{userId}/task/{taskId}")
+    public ResponseEntity<?> updateTaskOfUser(@PathVariable("userId") Long userId,
+            @PathVariable("taskId") Long taskId, @RequestBody Task task) {
+        return userService.updateTaskOfUser(userId, taskId, task);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
         return userService.deleteUser(id);
+    }
+
+    @DeleteMapping("/{userId}/task/{taskId}")
+    public ResponseEntity<?> deleteTaskOfUser(@PathVariable("userId") Long userId,
+            @PathVariable("taskId") Long TaskId) {
+        return userService.deleteTaskOfUser(userId, TaskId);
+    }
+
+    @DeleteMapping("/{id}/tasks")
+    public ResponseEntity<?> deleteTasksOfUser(@PathVariable("id") Long id) {
+        return userService.deleteTasksOfUser(id);
     }
 
 }
