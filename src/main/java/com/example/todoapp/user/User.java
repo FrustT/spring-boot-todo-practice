@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.example.todoapp.task.Task;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,7 @@ public class User implements UserDetails {
     private String password;
 
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties("owner")
     private List<Task> tasks;
 
     @Enumerated(EnumType.STRING)
