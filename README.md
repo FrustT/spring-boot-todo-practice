@@ -14,6 +14,7 @@
 - [ ] Authentication is completed
 - [x] Authorization init (permits all routes for now)
 - [ ] Authorization is completed
+- [ ] Secret keys config 
 
 
 - - -
