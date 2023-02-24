@@ -6,6 +6,7 @@ import com.example.todoapp.user.Role;
 import com.example.todoapp.user.User;
 import com.example.todoapp.user.UserService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,7 @@ public class ConfigRunner implements CommandLineRunner {
 
     private TaskService taskService;
     private UserService userService;
+    private Logger logger;
 
     @Override
     public void run(String... args) throws Exception {
@@ -29,12 +31,12 @@ public class ConfigRunner implements CommandLineRunner {
         Task task2 = Task.builder().title("Second Title").description("2nd desc").completed(true).build();
         taskService.addTask(task1);
         taskService.addTask(task2);
-        System.out.println("User 1 id: " + user1.getId());
-        System.out.println("User 2 id: " + user2.getId());
-        System.out.println("Task 1 id: " + task1.getId());
-        System.out.println("Task 2 id: " + task2.getId());
+        logger.info("User 1 id: " + user1.getId());
+        logger.info("User 2 id: " + user2.getId());
+        logger.info("Task 1 id: " + task1.getId());
+        logger.info("Task 2 id: " + task2.getId());
         taskService.assignUserToTask(task1.getId(), user1.getId());
         taskService.assignUserToTask(task2.getId(), user2.getId());
-        System.out.println("Users and Tasks are added");
+        logger.info("Users and Tasks are added");
     }
 }
