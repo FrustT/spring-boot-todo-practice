@@ -19,12 +19,21 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse login(AuthenticationRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtService.generateToken(authentication);
-        return new AuthenticationResponse(token);
+    public AuthenticationResponse register(RegisterRequest request) {
+        var user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
+
+        // check if user exists before register
+        User foundUser = userRepository.findByEmail(request.getEmail());
+        if(foundUser!=null) throw new IllegalStateException("user exists"); // TODO: improve later
+        User response = userRepository.save(user);
+        var jwtToken = jwtService.generateToken(response);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

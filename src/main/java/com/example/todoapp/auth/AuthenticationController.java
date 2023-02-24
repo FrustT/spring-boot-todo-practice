@@ -16,10 +16,9 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/login")
-    public AuthenticationResponse login(@RequestBody AuthenticationRequest request) {
-        System.out.println(request);
-        return authenticationService.login(request);
+    @PostMapping("/register")
+    public AuthenticationResponse login(@RequestBody RegisterRequest request) {
+        return authenticationService.register(request);
     }
 
     @PostMapping("/authenticate")
