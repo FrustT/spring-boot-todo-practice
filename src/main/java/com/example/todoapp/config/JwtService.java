@@ -1,4 +1,4 @@
-package com.example.todoapp.auth;
+package com.example.todoapp.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

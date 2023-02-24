@@ -1,4 +1,4 @@
-package com.example.todoapp.models.requests.Auth;
+package com.example.todoapp.models.requests.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

@@ -1,4 +1,4 @@
-package com.example.todoapp.models.requests.Task;
+package com.example.todoapp.models.requests.task;
 
 import lombok.Builder;
 

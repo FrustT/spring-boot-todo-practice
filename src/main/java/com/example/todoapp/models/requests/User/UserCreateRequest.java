@@ -1,4 +1,4 @@
-package com.example.todoapp.models.requests.User;
+package com.example.todoapp.models.requests.user;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;

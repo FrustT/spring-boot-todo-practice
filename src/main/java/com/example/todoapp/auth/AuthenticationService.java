@@ -1,15 +1,14 @@
 package com.example.todoapp.auth;
 
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.todoapp.models.requests.Auth.AuthenticationRequest;
-import com.example.todoapp.models.requests.Auth.RegisterRequest;
+import com.example.todoapp.config.JwtService;
+import com.example.todoapp.models.requests.auth.AuthenticationRequest;
+import com.example.todoapp.models.requests.auth.RegisterRequest;
 import com.example.todoapp.models.responses.AuthenticationResponse;
 import com.example.todoapp.user.User;
 import com.example.todoapp.user.UserRepository;
