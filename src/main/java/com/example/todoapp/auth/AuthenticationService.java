@@ -7,6 +7,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.example.todoapp.models.requests.Auth.AuthenticationRequest;
+import com.example.todoapp.models.requests.Auth.RegisterRequest;
+import com.example.todoapp.models.responses.AuthenticationResponse;
 import com.example.todoapp.user.User;
 import com.example.todoapp.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +32,8 @@ public class AuthenticationService {
 
         // check if user exists before register
         User foundUser = userRepository.findByEmail(request.getEmail());
-        if(foundUser!=null) throw new IllegalStateException("user exists"); // TODO: improve later
+        if (foundUser != null)
+            throw new IllegalStateException("user exists"); // TODO: improve later
         User response = userRepository.save(user);
         var jwtToken = jwtService.generateToken(response);
         return AuthenticationResponse.builder()

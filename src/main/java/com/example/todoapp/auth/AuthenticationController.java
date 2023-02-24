@@ -3,6 +3,11 @@ package com.example.todoapp.auth;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.todoapp.models.requests.Auth.AuthenticationRequest;
+import com.example.todoapp.models.requests.Auth.RegisterRequest;
+import com.example.todoapp.models.responses.AuthenticationResponse;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
