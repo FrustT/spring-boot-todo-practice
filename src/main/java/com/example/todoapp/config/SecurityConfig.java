@@ -25,6 +25,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/**")
                 .permitAll()
+                .requestMatchers("/v3/api-docs/**","/swagger*/**")
+                .permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
