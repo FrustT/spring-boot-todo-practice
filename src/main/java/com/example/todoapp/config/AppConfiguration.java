@@ -31,6 +31,7 @@ public class AppConfiguration {
             return User.builder().email(user.getUsername())
                     .password(user.getPassword())
                     .role(user.getRole())
+                    .name(user.getName())
                     .build();
         };
     }

@@ -69,8 +69,8 @@ public class UserController {
 
     @DeleteMapping("/{userId}/task/{taskId}")
     public ResponseEntity<?> deleteTaskOfUser(@PathVariable("userId") Long userId,
-            @PathVariable("taskId") Long TaskId) {
-        return userService.deleteTaskOfUser(userId, TaskId);
+            @PathVariable("taskId") Long taskId) {
+        return userService.deleteTaskOfUser(userId, taskId);
     }
 
     @DeleteMapping("/{id}/tasks")
