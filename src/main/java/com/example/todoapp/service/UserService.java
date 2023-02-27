@@ -69,6 +69,7 @@ public class UserService implements IUserService {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             return ResponseEntity.status(409).body("User already exists");
         }
+
         userRepository.save(user);
         return ResponseEntity.ok("User has been added!");
     }
