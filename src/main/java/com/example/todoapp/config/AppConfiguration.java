@@ -1,7 +1,8 @@
 package com.example.todoapp.config;
 
-import com.example.todoapp.user.User;
-import com.example.todoapp.user.UserRepository;
+import com.example.todoapp.repository.UserRepository;
+import com.example.todoapp.entity.User;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,6 +43,7 @@ public class AppConfiguration {
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
+
     }
 
     @Bean

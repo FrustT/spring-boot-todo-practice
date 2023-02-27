@@ -1,10 +1,11 @@
 package com.example.todoapp.config;
 
-import com.example.todoapp.task.Task;
-import com.example.todoapp.task.TaskService;
-import com.example.todoapp.user.Role;
-import com.example.todoapp.user.User;
-import com.example.todoapp.user.UserService;
+import com.example.todoapp.entity.Role;
+import com.example.todoapp.entity.Task;
+import com.example.todoapp.service.TaskService;
+import com.example.todoapp.service.UserService;
+import com.example.todoapp.entity.User;
+
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
