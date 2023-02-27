@@ -17,6 +17,7 @@
 - [ ] Controllers has been simplyfied
 - [ ] Global ControllerAdvice for exceptions
 - [ ] Index controller?
+- [ ] Secret keys config 
 
 
 - - -
