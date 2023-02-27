@@ -1,4 +1,4 @@
-package com.example.todoapp.user;
+package com.example.todoapp.entity;
 
 public enum Role {
     ADMIN,

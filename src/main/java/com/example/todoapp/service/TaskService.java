@@ -1,11 +1,14 @@
-package com.example.todoapp.task;
+package com.example.todoapp.service;
 
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.example.todoapp.user.UserRepository;
-import com.example.todoapp.user.User;
+
+import com.example.todoapp.entity.Task;
+import com.example.todoapp.entity.User;
+import com.example.todoapp.repository.TaskRepository;
+import com.example.todoapp.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 

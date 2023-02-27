@@ -1,9 +1,11 @@
-package com.example.todoapp.user;
+package com.example.todoapp.service;
 
 import java.util.List;
 import java.util.Optional;
-import com.example.todoapp.task.Task;
-import com.example.todoapp.task.TaskService;
+
+import com.example.todoapp.entity.Task;
+import com.example.todoapp.entity.User;
+import com.example.todoapp.repository.UserRepository;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -67,6 +69,7 @@ public class UserService implements IUserService {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             return ResponseEntity.status(409).body("User already exists");
         }
+
         userRepository.save(user);
         return ResponseEntity.ok("User has been added!");
     }

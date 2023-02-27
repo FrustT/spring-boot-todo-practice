@@ -1,6 +1,8 @@
-package com.example.todoapp.user;
+package com.example.todoapp.controller;
 
-import com.example.todoapp.task.Task;
+import com.example.todoapp.entity.Task;
+import com.example.todoapp.service.IUserService;
+import com.example.todoapp.entity.User;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -69,8 +71,8 @@ public class UserController {
 
     @DeleteMapping("/{userId}/task/{taskId}")
     public ResponseEntity<?> deleteTaskOfUser(@PathVariable("userId") Long userId,
-            @PathVariable("taskId") Long TaskId) {
-        return userService.deleteTaskOfUser(userId, TaskId);
+            @PathVariable("taskId") Long taskId) {
+        return userService.deleteTaskOfUser(userId, taskId);
     }
 
     @DeleteMapping("/{id}/tasks")

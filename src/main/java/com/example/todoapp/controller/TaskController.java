@@ -1,7 +1,10 @@
-package com.example.todoapp.task;
+package com.example.todoapp.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.example.todoapp.entity.Task;
+import com.example.todoapp.service.ITaskService;
 
 import lombok.AllArgsConstructor;
 

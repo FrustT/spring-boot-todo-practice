@@ -7,13 +7,16 @@
 - [x] User Controller
 - [x] User Entity
 - [x] User CRUD
-- [ ] User data init with import.sql
-- [ ] Task-User relationship
-- [x] Authentication init (Basic Auth)
-- [ ] Authentication init (JWT Auth)
-- [ ] Authentication is completed
+- [x] Task-User relationship
+- [x] Authentication init (JWT Auth)
+- [x] Authentication is completed
 - [x] Authorization init (permits all routes for now)
-- [ ] Authorization is completed
+- [x] Register endpoint
+- [ ] Auth has been simplyfied
+- [ ] Services has been simplyfied
+- [ ] Controllers has been simplyfied
+- [ ] Global ControllerAdvice for exceptions
+- [ ] Index controller?
 - [ ] Secret keys config 
 
 
@@ -23,3 +26,4 @@
 ## TODO 
 
 - `api/user` works but `api/user/` does not
+- implement user exists error response body

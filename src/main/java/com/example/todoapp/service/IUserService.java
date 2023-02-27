@@ -1,6 +1,7 @@
-package com.example.todoapp.user;
+package com.example.todoapp.service;
 
-import com.example.todoapp.task.Task;
+import com.example.todoapp.entity.Task;
+import com.example.todoapp.entity.User;
 
 import org.springframework.http.ResponseEntity;
 

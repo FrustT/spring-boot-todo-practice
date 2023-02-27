@@ -1,6 +1,8 @@
-package com.example.todoapp.task;
+package com.example.todoapp.service;
 
 import org.springframework.http.ResponseEntity;
+
+import com.example.todoapp.entity.Task;
 
 public interface ITaskService {
 

@@ -1,8 +1,7 @@
-package com.example.todoapp.task;
+package com.example.todoapp.entity;
 
 import java.time.LocalDate;
 
-import com.example.todoapp.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Entity;
