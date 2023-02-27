@@ -1,7 +1,8 @@
 package com.example.todoapp.config;
 
-import com.example.todoapp.user.User;
-import com.example.todoapp.user.UserRepository;
+import com.example.todoapp.repository.UserRepository;
+import com.example.todoapp.entity.User;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
@@ -42,6 +42,7 @@ public class AppConfiguration {
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
+
     }
 
     @Bean
@@ -51,6 +52,6 @@ public class AppConfiguration {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 }
