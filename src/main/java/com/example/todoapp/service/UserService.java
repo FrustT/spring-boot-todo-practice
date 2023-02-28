@@ -75,10 +75,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> addTaskToUser(Long userId, Task task) { // taskservice checks if user exists (but
+    public void addTaskToUser(Long userId, Task task) { // taskservice checks if user exists (but
                                                                      // validation could also added here)
         taskService.addTask(task);
-        return taskService.assignUserToTask(task.getId(), userId);
+        taskService.assignUserToTask(task.getId(), userId); // TODO, tightly coupled method, changed return type, fix later
     }
 
     @Override

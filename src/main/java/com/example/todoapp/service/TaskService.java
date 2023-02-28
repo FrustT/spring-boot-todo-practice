@@ -1,5 +1,6 @@
 package com.example.todoapp.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import com.example.todoapp.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
+import javax.swing.text.html.Option;
+
 @Service
 @AllArgsConstructor
 public class TaskService implements ITaskService {
@@ -20,71 +23,60 @@ public class TaskService implements ITaskService {
     private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> addTask(Task task) {
-        taskRepository.save(task);
-        return ResponseEntity.ok("Task added successfully");
+    public Task addTask(Task task) { // TODO, instead of Task in parameter, use DTO for validation
+        return taskRepository.save(task);
     }
 
     @Override
-    public ResponseEntity<?> listTasks() {
-        return ResponseEntity.ok(taskRepository.findAll());
+    public List<Task> listTasks() {
+        return taskRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<?> deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
+    public boolean deleteTask(Long id) { // TODO : should we use 404 and 200 or is just 200 enough?
+        if (!taskRepository.existsById(id)) { return false; } // false = not found
         taskRepository.deleteById(id);
-        return ResponseEntity.ok("Task deleted successfully");
+        return true;
     }
 
     @Override
-    public ResponseEntity<?> getTask(Long id) {
-        Optional<?> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
-        Task task = (Task) responseFromDatabase.get();
-        return ResponseEntity.ok(task);
+    public Optional<Task> getTask(Long id) {
+        Optional<Task> responseFromDatabase = taskRepository.findById(id);
+        return responseFromDatabase;
     }
 
     @Override
-    public ResponseEntity<?> updateTask(Long id, Task task) {
-        Optional<?> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
+    public Task updateTask(Long id, Task task) {
+        Optional<Task> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
                                                                         // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
+
+        if (responseFromDatabase.isEmpty()) return null; // exit from method
+
         Task oldTask = (Task) responseFromDatabase.get();
-        oldTask.setTitle(task.getTitle());
+        oldTask.setTitle(task.getTitle()); // TODO : what if user sends null? it will override existing data
         oldTask.setDescription(task.getDescription());
         oldTask.setCompleted(task.isCompleted());
         oldTask.setDueDate(task.getDueDate());
         oldTask.setCompletedDate(task.getCompletedDate());
-        taskRepository.save(oldTask);
-        return ResponseEntity.ok("Task updated successfully");
+
+        return taskRepository.save(oldTask);
     }
 
     @Override
-    public ResponseEntity<?> assignUserToTask(Long taskId, Long userId) {
-        Optional<?> responseFromTaskDatabase = taskRepository.findById(taskId); // This assignment saves us from calling
+    public Task assignUserToTask(Long taskId, Long userId) {
+        Optional<Task> responseFromTaskDatabase = taskRepository.findById(taskId); // This assignment saves us from calling
                                                                                 // the database twice
-        if (responseFromTaskDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
-        Task task = (Task) responseFromTaskDatabase.get();
+        if (responseFromTaskDatabase.isEmpty()) return null;
+        Task task = responseFromTaskDatabase.get();
 
-        Optional<?> responseFromUserDatabase = userRepository.findById(userId); // This assignment saves us from calling
+        Optional<User> responseFromUserDatabase = userRepository.findById(userId); // This assignment saves us from calling
                                                                                 // the database twice
-        if (responseFromUserDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromUserDatabase.get();
+        if (responseFromUserDatabase.isEmpty()) return null;
+        User user = responseFromUserDatabase.get();
+
         task.setOwner(user);
         taskRepository.save(task);
-        return ResponseEntity.ok("User assigned to task successfully");
+        return task;
     }
 
 }

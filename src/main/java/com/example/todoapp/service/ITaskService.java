@@ -4,18 +4,21 @@ import org.springframework.http.ResponseEntity;
 
 import com.example.todoapp.entity.Task;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface ITaskService {
 
-    ResponseEntity<?> listTasks();
+    List<Task> listTasks();
 
-    ResponseEntity<?> getTask(Long id);
+    Optional<Task> getTask(Long id);
 
-    ResponseEntity<?> addTask(Task task);
+    Task addTask(Task task);
 
-    ResponseEntity<?> updateTask(Long id, Task task);
+    Task updateTask(Long id, Task task);
 
-    ResponseEntity<?> deleteTask(Long id);
+    boolean deleteTask(Long id);
 
-    ResponseEntity<?> assignUserToTask(Long taskId, Long userId);
+    Task assignUserToTask(Long taskId, Long userId);
 
 }

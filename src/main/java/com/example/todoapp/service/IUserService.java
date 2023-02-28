@@ -15,7 +15,7 @@ public interface IUserService {
 
     ResponseEntity<?> getTaskOfUser(Long userId, Long taskId);
 
-    ResponseEntity<?> addTaskToUser(Long userId, Task task);
+    void addTaskToUser(Long userId, Task task);
 
     ResponseEntity<?> addUser(User user);
 
