@@ -20,35 +20,25 @@ public class UserService implements IUserService {
     private final TaskService taskService;
 
     @Override
-    public ResponseEntity<?> getUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<?> getUser(Long id) {
-        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
+    public Optional<User> getUser(Long id) {
+        return userRepository.findById(id); // This assignment saves us from calling the
                                                                         // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
-        return ResponseEntity.ok(user);
     }
 
     @Override
-    public ResponseEntity<?> getTasksOfUser(Long id) {
-        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
-
-        return ResponseEntity.ok(user.getTasks());
+    public List<Task> getTasksOfUser(Long id) {
+        Optional<User> responseFromDatabase = userRepository.findById(id);
+        if (responseFromDatabase.isEmpty()) return null;
+        return responseFromDatabase.get().getTasks();
     }
 
     @Override
-    public ResponseEntity<?> getTaskOfUser(Long userId, Long taskId) {
+    public ResponseEntity<?> getTaskOfUser(Long userId, Long taskId) { // TODO: YAGNI?
         Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
                                                                             // database twice
         if (responseFromDatabase.isEmpty()) {
@@ -64,7 +54,7 @@ public class UserService implements IUserService {
         return ResponseEntity.status(404).body("Task not found");
     }
 
-    @Override
+    @Override // TODO later, we need error object to pass
     public ResponseEntity<?> addUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             return ResponseEntity.status(409).body("User already exists");
@@ -74,7 +64,7 @@ public class UserService implements IUserService {
         return ResponseEntity.ok("User has been added!");
     }
 
-    @Override
+    @Override // TODO: YAGNI?
     public void addTaskToUser(Long userId, Task task) { // taskservice checks if user exists (but
                                                                      // validation could also added here)
         taskService.addTask(task);
@@ -122,12 +112,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<?> deleteUser(Long id) {
-        if (!userExistsById(id)) {
-            return ResponseEntity.status(404).body("User not found");
-        }
+    public boolean deleteUser(Long id) { // returns false if user not found
+        if (!userExistsById(id)) return false;
         userRepository.deleteById(id);
-        return ResponseEntity.ok("Users Deleted.");
+        return true;
     }
 
     @Override

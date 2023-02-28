@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("api/v1/users")
 @AllArgsConstructor
@@ -25,17 +28,21 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUsers() {
-        return userService.getUsers();
+        return ResponseEntity.ok(userService.getUsers());
     }
 
     @GetMapping("{id}")
     public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
-        return userService.getUser(id);
+        Optional<User> user = userService.getUser(id);
+        if (user.isEmpty()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(user.get());
     }
 
     @GetMapping("{id}/tasks")
     public ResponseEntity<?> getTasksOfUser(@PathVariable("id") Long id) {
-        return userService.getTasksOfUser(id);
+        List<Task> tasks = userService.getTasksOfUser(id);
+        if (tasks==null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{userId}/task/{taskId}")
@@ -66,10 +73,12 @@ public class UserController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
-        return userService.deleteUser(id);
+        boolean foundUser = userService.deleteUser(id);
+        if (!foundUser) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok("User deleted successfully");
     }
 
-    @DeleteMapping("/{userId}/task/{taskId}")
+    @DeleteMapping("/{userId}/task/{taskId}") // TODO: YAGNI?
     public ResponseEntity<?> deleteTaskOfUser(@PathVariable("userId") Long userId,
             @PathVariable("taskId") Long taskId) {
         return userService.deleteTaskOfUser(userId, taskId);

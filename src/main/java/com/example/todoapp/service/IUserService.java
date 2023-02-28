@@ -5,13 +5,16 @@ import com.example.todoapp.entity.User;
 
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface IUserService {
 
-    ResponseEntity<?> getUsers();
+    List<User> getUsers();
 
-    ResponseEntity<?> getUser(Long id);
+    Optional<User> getUser(Long id);
 
-    ResponseEntity<?> getTasksOfUser(Long id);
+    List<Task> getTasksOfUser(Long id);
 
     ResponseEntity<?> getTaskOfUser(Long userId, Long taskId);
 
@@ -23,7 +26,7 @@ public interface IUserService {
 
     ResponseEntity<?> updateTaskOfUser(Long userId, Long taskId, Task task);
 
-    ResponseEntity<?> deleteUser(Long id);
+    boolean deleteUser(Long id);
 
     ResponseEntity<?> deleteTasksOfUser(Long id);
 
