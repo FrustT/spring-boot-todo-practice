@@ -5,8 +5,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import lombok.Data;
 import lombok.ToString;
 
-import com.example.todoapp.entity.User;
-
 @Data
 @ToString
 public class CurrentUserData {

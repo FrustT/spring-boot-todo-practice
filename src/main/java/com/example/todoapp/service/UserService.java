@@ -3,9 +3,12 @@ package com.example.todoapp.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.UserRepository;
+import com.example.todoapp.service.TaskService;
+import com.example.todoapp.exception.BusinessException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,13 +30,14 @@ public class UserService implements IUserService {
     @Override
     public Optional<User> getUser(Long id) {
         return userRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
+                                            // database twice
     }
 
     @Override
     public List<Task> getTasksOfUser(Long id) {
         Optional<User> responseFromDatabase = userRepository.findById(id);
-        if (responseFromDatabase.isEmpty()) return null;
+        if (responseFromDatabase.isEmpty())
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         return responseFromDatabase.get().getTasks();
     }
 
@@ -42,7 +46,7 @@ public class UserService implements IUserService {
         Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
                                                                             // database twice
         if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = (User) responseFromDatabase.get();
         List<Task> tasks = user.getTasks();
@@ -51,13 +55,13 @@ public class UserService implements IUserService {
                 return ResponseEntity.ok(task);
             }
         }
-        return ResponseEntity.status(404).body("Task not found");
+        throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
     @Override // TODO later, we need error object to pass
     public ResponseEntity<?> addUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            return ResponseEntity.status(409).body("User already exists");
+            throw new BusinessException(HttpStatus.CONFLICT, "User already exists");
         }
 
         userRepository.save(user);
@@ -66,9 +70,10 @@ public class UserService implements IUserService {
 
     @Override // TODO: YAGNI?
     public void addTaskToUser(Long userId, Task task) { // taskservice checks if user exists (but
-                                                                     // validation could also added here)
+                                                        // validation could also added here)
         taskService.addTask(task);
-        taskService.assignUserToTask(task.getId(), userId); // TODO, tightly coupled method, changed return type, fix later
+        taskService.assignUserToTask(task.getId(), userId); // TODO, tightly coupled method, changed return type, fix
+                                                            // later
     }
 
     @Override
@@ -76,7 +81,7 @@ public class UserService implements IUserService {
         Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
                                                                         // database twice
         if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
         User oldUser = (User) responseFromDatabase.get();
 
@@ -92,7 +97,7 @@ public class UserService implements IUserService {
         Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
                                                                             // database twice
         if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = (User) responseFromDatabase.get();
 
@@ -104,7 +109,7 @@ public class UserService implements IUserService {
             }
         }
         if (!taskFound) {
-            return ResponseEntity.status(404).body("User does not have this task");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User does not have this task");
         }
 
         taskService.updateTask(taskId, task);
@@ -113,7 +118,8 @@ public class UserService implements IUserService {
 
     @Override
     public boolean deleteUser(Long id) { // returns false if user not found
-        if (!userExistsById(id)) return false;
+        if (!userExistsById(id))
+            return false;
         userRepository.deleteById(id);
         return true;
     }
@@ -123,7 +129,7 @@ public class UserService implements IUserService {
         Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
                                                                         // database twice
         if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = (User) responseFromDatabase.get();
         user.getTasks().clear();
@@ -136,7 +142,7 @@ public class UserService implements IUserService {
         Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
                                                                             // database twice
         if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
         User user = (User) responseFromDatabase.get();
         List<Task> tasks = user.getTasks();
@@ -147,7 +153,7 @@ public class UserService implements IUserService {
                 return ResponseEntity.ok("Task deleted of user");
             }
         }
-        return ResponseEntity.status(404).body("Task not found");
+        throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
     public boolean userExistsById(Long id) {
@@ -155,6 +161,12 @@ public class UserService implements IUserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).get();
+        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
+                                                                        // database twice
+        if (responseFromDatabase.isEmpty()) {
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        return (User) responseFromDatabase.get();
     }
 }

@@ -1,25 +1,21 @@
 package com.example.todoapp.exception;
 
+import org.springframework.http.HttpStatus;
+
 public class BusinessException extends RuntimeException {
 
-    private final ErrorCode errorCode;
-    private final String message;
+    private final HttpStatus httpStatus;
 
-    public BusinessException(ErrorCode errorCode, String message) {
-        this.errorCode = errorCode;
-        this.message = message;
+    public BusinessException(HttpStatus httpStatus, String message) {
+        super(message);
+        this.httpStatus = httpStatus;
     }
 
     public int getStatusCode() {
-        return errorCode.getHttpCode();
+        return httpStatus.value();
     }
 
     public String getErrorCode() {
-        return errorCode.name();
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
+        return httpStatus.name();
     }
 }

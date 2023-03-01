@@ -3,7 +3,6 @@ package com.example.todoapp.service;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.todoapp.entity.Task;
@@ -12,8 +11,6 @@ import com.example.todoapp.repository.TaskRepository;
 import com.example.todoapp.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
-
-import javax.swing.text.html.Option;
 
 @Service
 @AllArgsConstructor
@@ -34,7 +31,9 @@ public class TaskService implements ITaskService {
 
     @Override
     public boolean deleteTask(Long id) { // TODO : should we use 404 and 200 or is just 200 enough?
-        if (!taskRepository.existsById(id)) { return false; } // false = not found
+        if (!taskRepository.existsById(id)) {
+            return false;
+        } // false = not found
         taskRepository.deleteById(id);
         return true;
     }
@@ -48,9 +47,10 @@ public class TaskService implements ITaskService {
     @Override
     public Task updateTask(Long id, Task task) {
         Optional<Task> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
+                                                                           // database twice
 
-        if (responseFromDatabase.isEmpty()) return null; // exit from method
+        if (responseFromDatabase.isEmpty())
+            return null; // exit from method
 
         Task oldTask = (Task) responseFromDatabase.get();
         oldTask.setTitle(task.getTitle()); // TODO : what if user sends null? it will override existing data
@@ -64,14 +64,18 @@ public class TaskService implements ITaskService {
 
     @Override
     public Task assignUserToTask(Long taskId, Long userId) {
-        Optional<Task> responseFromTaskDatabase = taskRepository.findById(taskId); // This assignment saves us from calling
-                                                                                // the database twice
-        if (responseFromTaskDatabase.isEmpty()) return null;
+        Optional<Task> responseFromTaskDatabase = taskRepository.findById(taskId); // This assignment saves us from
+                                                                                   // calling
+                                                                                   // the database twice
+        if (responseFromTaskDatabase.isEmpty())
+            return null;
         Task task = responseFromTaskDatabase.get();
 
-        Optional<User> responseFromUserDatabase = userRepository.findById(userId); // This assignment saves us from calling
-                                                                                // the database twice
-        if (responseFromUserDatabase.isEmpty()) return null;
+        Optional<User> responseFromUserDatabase = userRepository.findById(userId); // This assignment saves us from
+                                                                                   // calling
+                                                                                   // the database twice
+        if (responseFromUserDatabase.isEmpty())
+            return null;
         User user = responseFromUserDatabase.get();
 
         task.setOwner(user);
