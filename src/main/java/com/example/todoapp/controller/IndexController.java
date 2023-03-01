@@ -16,6 +16,6 @@ public class IndexController {
     @GetMapping
     public String index(CurrentUserData currentUserData) {
 
-        return "Welcome to the Todo App API , " + currentUserData.getName() + "!";
+        return "Welcome to the Todo App API , " + currentUserData.getUsername() + "!";
     }
 }

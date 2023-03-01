@@ -11,18 +11,10 @@ import com.example.todoapp.entity.User;
 @ToString
 public class CurrentUserData {
 
-    private User user;
+    private String username;
 
     public CurrentUserData() {
-        this.user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
-    public String getName() {
-        return user.getName();
-    }
-
-    public String getEmail() {
-        return user.getEmail();
+        this.username = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
     }
 
 }

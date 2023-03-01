@@ -12,6 +12,7 @@
 - [x] Authentication is completed
 - [x] Authorization init (permits all routes for now)
 - [x] Register endpoint
+- [ ] ModelMapper
 - [ ] Auth has been simplyfied
 - [ ] Services has been simplyfied
 - [ ] Controllers has been simplyfied

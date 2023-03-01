@@ -1,47 +1,57 @@
 package com.example.todoapp.security;
 
+import com.example.todoapp.repository.UserRepository;
+import com.example.todoapp.entity.User;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
 
 @Configuration
-@EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+    private final UserRepository userRepository;
 
     @Bean
-    SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/**")
-                .permitAll()
-                .requestMatchers("/v3/api-docs/**", "/swagger*/**")
-                .permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            User user = userRepository.findByEmail(username);
+            if (user == null) {
+                throw new UsernameNotFoundException(username);
+            }
+            return User.builder().email(user.getUsername())
+                    .password(user.getPassword())
+                    .role(user.getRole())
+                    .name(user.getName())
+                    .build();
+        };
     }
 
-}
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
 
-// .requestMatchers(HttpMethod.POST,"/api/**").hasRole("ADMIN")
-// .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ADMIN", "USER")
-// .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
-// .requestMatchers(HttpMethod.POST, "/api/**").hasRole("ADMIN")
-// .requestMatchers(HttpMethod.PUT, "/api/**").hasRole("ADMIN"));
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
