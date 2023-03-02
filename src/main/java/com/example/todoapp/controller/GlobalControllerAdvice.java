@@ -1,6 +1,7 @@
 package com.example.todoapp.controller;
 
 import com.example.todoapp.exception.BusinessException;
+import java.util.Arrays;
 
 import org.springframework.http.HttpStatus;
 import com.example.todoapp.model.responses.ErrorModel;
@@ -32,7 +33,7 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
                 new ErrorModel(
                         HttpStatus.INTERNAL_SERVER_ERROR,
                         e.getMessage(),
-                        e.getStackTrace().toString()),
+                        Arrays.toString(e.getStackTrace())),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

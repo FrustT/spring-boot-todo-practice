@@ -8,7 +8,8 @@ import com.example.todoapp.service.ITaskService;
 
 import lombok.AllArgsConstructor;
 
-import java.util.Optional;
+import java.util.List;
+import com.example.todoapp.model.responses.TaskResponse;
 
 @RestController
 @RequestMapping("api/v1/tasks")
@@ -18,41 +19,44 @@ public class TaskController {
     private ITaskService taskService;
 
     @GetMapping
-    public ResponseEntity<?> getTasks() {
-        return ResponseEntity.ok(taskService.listTasks());
+    public ResponseEntity<List<TaskResponse>> getTasks() {
+        return ResponseEntity.ok(
+                TaskResponse.from(
+                        taskService.listTasks()));
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<?> getTask(@PathVariable Long id) {
-        Optional<Task> task = taskService.getTask(id);
-        if (task.isEmpty()) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(task.get());
+    public ResponseEntity<TaskResponse> getTask(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                new TaskResponse(
+                        taskService.getTask(id)));
     }
 
     @PostMapping
-    public ResponseEntity<Task> addTask(@RequestBody Task task) {
-        return ResponseEntity.status(201).body(taskService.addTask(task));
+    public ResponseEntity<TaskResponse> addTask(@RequestBody Task task) {
+        return ResponseEntity.status(201).body(
+                new TaskResponse(
+                        taskService.addTask(task)));
     }
 
     @PutMapping("{id}") // TODO : should update route sends back entity model? or just a message?
-    public ResponseEntity<Task> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
-        Task foundTask = taskService.updateTask(id, task);
-        if(foundTask==null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(foundTask);
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
+        return ResponseEntity.ok(
+                new TaskResponse(
+                        taskService.updateTask(id, task)));
     }
 
     @PutMapping("{taskId}/assign/{userId}")
-    public ResponseEntity<Task> assignUserToTask(@PathVariable("taskId") Long taskId,
+    public ResponseEntity<TaskResponse> assignUserToTask(@PathVariable("taskId") Long taskId,
             @PathVariable("userId") Long userId) {
-        Task task = taskService.assignUserToTask(taskId, userId);
-        if (task==null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(task);
+        return ResponseEntity.ok(
+                new TaskResponse(
+                        taskService.assignUserToTask(taskId, userId)));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteTask(@PathVariable("id") Long id) {
-        boolean isFound = taskService.deleteTask(id);
-        if (!isFound) return ResponseEntity.notFound().build();
+    public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
+        taskService.deleteTask(id);
         return ResponseEntity.ok("Task deleted successfully");
     }
 

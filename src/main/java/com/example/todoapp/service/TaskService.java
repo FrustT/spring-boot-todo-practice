@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
+import com.example.todoapp.exception.BusinessException;
 
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.TaskRepository;
-import com.example.todoapp.repository.UserRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -17,7 +18,7 @@ import lombok.AllArgsConstructor;
 public class TaskService implements ITaskService {
 
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
+    private final IUserService userService;
 
     @Override
     public Task addTask(Task task) { // TODO, instead of Task in parameter, use DTO for validation
@@ -30,29 +31,19 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public boolean deleteTask(Long id) { // TODO : should we use 404 and 200 or is just 200 enough?
-        if (!taskRepository.existsById(id)) {
-            return false;
-        } // false = not found
+    public void deleteTask(Long id) {
+        getTaskById(id);
         taskRepository.deleteById(id);
-        return true;
     }
 
     @Override
-    public Optional<Task> getTask(Long id) {
-        Optional<Task> responseFromDatabase = taskRepository.findById(id);
-        return responseFromDatabase;
+    public Task getTask(Long id) {
+        return getTaskById(id);
     }
 
     @Override
     public Task updateTask(Long id, Task task) {
-        Optional<Task> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
-                                                                           // database twice
-
-        if (responseFromDatabase.isEmpty())
-            return null; // exit from method
-
-        Task oldTask = (Task) responseFromDatabase.get();
+        Task oldTask = getTaskById(id);
         oldTask.setTitle(task.getTitle()); // TODO : what if user sends null? it will override existing data
         oldTask.setDescription(task.getDescription());
         oldTask.setCompleted(task.isCompleted());
@@ -64,23 +55,20 @@ public class TaskService implements ITaskService {
 
     @Override
     public Task assignUserToTask(Long taskId, Long userId) {
-        Optional<Task> responseFromTaskDatabase = taskRepository.findById(taskId); // This assignment saves us from
-                                                                                   // calling
-                                                                                   // the database twice
-        if (responseFromTaskDatabase.isEmpty())
-            return null;
-        Task task = responseFromTaskDatabase.get();
-
-        Optional<User> responseFromUserDatabase = userRepository.findById(userId); // This assignment saves us from
-                                                                                   // calling
-                                                                                   // the database twice
-        if (responseFromUserDatabase.isEmpty())
-            return null;
-        User user = responseFromUserDatabase.get();
+        Task task = getTaskById(taskId);
+        User user = userService.getUser(userId);
 
         task.setOwner(user);
         taskRepository.save(task);
         return task;
+    }
+
+    public Task getTaskById(Long id) {
+        Optional<Task> responseFromDatabase = taskRepository.findById(id);
+        if (responseFromDatabase.isEmpty()) {
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
+        }
+        return responseFromDatabase.get();
     }
 
 }
