@@ -2,7 +2,14 @@ package com.example.todoapp.controller;
 
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.service.IUserService;
+
+import jakarta.validation.Valid;
+
 import com.example.todoapp.entity.User;
+import com.example.todoapp.model.requests.task.TaskCreateRequest;
+import com.example.todoapp.model.requests.task.TaskUpdateRequest;
+import com.example.todoapp.model.requests.user.UserCreateRequest;
+import com.example.todoapp.model.requests.user.UserUpdateRequest;
 import com.example.todoapp.model.responses.TaskResponse;
 import com.example.todoapp.model.responses.UserResponse;
 import org.springframework.http.ResponseEntity;
@@ -53,27 +60,29 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        userService.addUser(user);
+    public ResponseEntity<String> addUser(@Valid @RequestBody UserCreateRequest userCreateRequest) {
+        userService.addUser(UserCreateRequest.from(userCreateRequest));
         return ResponseEntity.ok("User added successfully");
     }
 
     @PostMapping("/{userId}/task")
-    public ResponseEntity<String> addTaskToUser(@PathVariable("userId") Long userId, @RequestBody Task task) {
-        userService.addTaskToUser(userId, task);
+    public ResponseEntity<String> addTaskToUser(@PathVariable("userId") Long userId,
+            @Valid @RequestBody TaskCreateRequest taskCreateRequest) {
+        userService.addTaskToUser(userId, TaskCreateRequest.from(taskCreateRequest));
         return ResponseEntity.ok("Task added successfully");
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<String> updateUser(@PathVariable("id") Long id, @RequestBody User user) {
-        userService.updateUser(id, user);
+    public ResponseEntity<String> updateUser(@PathVariable("id") Long id,
+            @Valid @RequestBody UserUpdateRequest userUpdateRequest) {
+        userService.updateUser(id, UserUpdateRequest.from(userUpdateRequest));
         return ResponseEntity.ok("User updated successfully");
     }
 
     @PutMapping("/{userId}/task/{taskId}")
     public ResponseEntity<String> updateTaskOfUser(@PathVariable("userId") Long userId,
-            @PathVariable("taskId") Long taskId, @RequestBody Task task) {
-        userService.updateTaskOfUser(userId, taskId, task);
+            @PathVariable("taskId") Long taskId, @Valid @RequestBody TaskUpdateRequest taskUpdateRequest) {
+        userService.updateTaskOfUser(userId, taskId, TaskUpdateRequest.from(taskUpdateRequest));
         return ResponseEntity.ok("Task updated successfully");
     }
 

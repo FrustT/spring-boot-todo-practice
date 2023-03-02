@@ -4,8 +4,12 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import com.example.todoapp.entity.User;
+import com.example.todoapp.entity.Task;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,12 +18,23 @@ import lombok.Data;
 @AllArgsConstructor
 public class TaskCreateRequest {
 
-    @NotEmpty
+    @NotBlank(message = "Title is required")
+    @Size(min = 3, max = 50, message = "Title must be between 3 and 50 characters")
     private String title;
-    @NotEmpty
+    @NotEmpty(message = "Description is required")
     private String description;
-    private boolean completed;
+    @NotEmpty(message = "Due date is required")
     private LocalDate dueDate;
     private LocalDate completedDate;
     private User owner;
+
+    public static Task from(@Valid TaskCreateRequest taskCreateRequest) {
+        return Task.builder()
+                .title(taskCreateRequest.getTitle())
+                .description(taskCreateRequest.getDescription())
+                .dueDate(taskCreateRequest.getDueDate())
+                .completedDate(taskCreateRequest.getCompletedDate())
+                .owner(taskCreateRequest.getOwner())
+                .build();
+    }
 }

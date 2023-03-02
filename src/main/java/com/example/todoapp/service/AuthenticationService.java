@@ -1,6 +1,7 @@
 package com.example.todoapp.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -11,7 +12,11 @@ import com.example.todoapp.model.requests.auth.RegisterRequest;
 import com.example.todoapp.model.responses.AuthenticationResponse;
 import com.example.todoapp.repository.UserRepository;
 import com.example.todoapp.security.JwtService;
+
+import jakarta.validation.Valid;
+
 import com.example.todoapp.entity.User;
+import com.example.todoapp.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +38,7 @@ public class AuthenticationService {
         // check if user exists before register
         User foundUser = userRepository.findByEmail(request.getEmail());
         if (foundUser != null)
-            throw new IllegalStateException("user exists"); // TODO: improve later
+            throw new BusinessException(HttpStatus.CONFLICT, "User already exists");
         User response = userRepository.save(user);
         var jwtToken = jwtService.generateToken(response);
         return AuthenticationResponse.builder()
@@ -50,6 +55,6 @@ public class AuthenticationService {
             String token = jwtService.generateToken(user);
             return new AuthenticationResponse(token);
         }
-        throw new BadCredentialsException("Bad credentials");
+        throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid username or password");
     }
 }

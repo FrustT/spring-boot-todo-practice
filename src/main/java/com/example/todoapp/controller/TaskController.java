@@ -3,12 +3,15 @@ package com.example.todoapp.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.todoapp.entity.Task;
 import com.example.todoapp.service.ITaskService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 import java.util.List;
+
+import com.example.todoapp.model.requests.task.TaskCreateRequest;
+import com.example.todoapp.model.requests.task.TaskUpdateRequest;
 import com.example.todoapp.model.responses.TaskResponse;
 
 @RestController
@@ -21,29 +24,28 @@ public class TaskController {
         @GetMapping
         public ResponseEntity<List<TaskResponse>> getTasks() {
                 return ResponseEntity.ok(
-                                TaskResponse.from(
-                                                taskService.listTasks()));
+                                TaskResponse.from(taskService.listTasks()));
         }
 
         @GetMapping("{id}")
         public ResponseEntity<TaskResponse> getTask(@PathVariable Long id) {
                 return ResponseEntity.ok(
-                                new TaskResponse(
-                                                taskService.getTask(id)));
+                                new TaskResponse(taskService.getTask(id)));
         }
 
         @PostMapping
-        public ResponseEntity<TaskResponse> addTask(@RequestBody Task task) {
+        public ResponseEntity<TaskResponse> addTask(@Valid @RequestBody TaskCreateRequest taskCreateRequest) {
+
                 return ResponseEntity.status(201).body(
-                                new TaskResponse(
-                                                taskService.addTask(task)));
+                                new TaskResponse(taskService.addTask(TaskCreateRequest.from(taskCreateRequest))));
         }
 
-        @PutMapping("{id}") // TODO : should update route sends back entity model? or just a message?
-        public ResponseEntity<TaskResponse> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
+        @PutMapping("{id}")
+        public ResponseEntity<TaskResponse> updateTask(@PathVariable("id") Long id,
+                        @Valid @RequestBody TaskUpdateRequest taskUpdateRequest) {
                 return ResponseEntity.ok(
                                 new TaskResponse(
-                                                taskService.updateTask(id, task)));
+                                                taskService.updateTask(id, TaskUpdateRequest.from(taskUpdateRequest))));
         }
 
         @DeleteMapping("{id}")
