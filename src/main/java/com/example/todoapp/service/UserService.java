@@ -7,16 +7,14 @@ import org.springframework.http.HttpStatus;
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.UserRepository;
-import com.example.todoapp.service.TaskService;
 import com.example.todoapp.exception.BusinessException;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
@@ -59,12 +57,17 @@ public class UserService implements IUserService {
         userRepository.save(user);
     }
 
-    @Override // TODO: YAGNI?
-    public void addTaskToUser(Long userId, Task task) { // taskservice checks if user exists (but
-                                                        // validation could also added here)
-        taskService.addTask(task);
-        taskService.assignUserToTask(task.getId(), userId); // TODO, tightly coupled method, changed return type, fix
-                                                            // later
+    @Override
+    public void addTaskToUser(Long userId, Task task) {
+        User user = getUserById(userId);
+        Task newTask = taskService.addTask(task);
+        taskService.assignUserToTask(newTask.getId(), user);
+    }
+
+    @Override
+    public void assignTaskToUser(Long userId, Long taskId) {
+        User user = getUserById(userId);
+        taskService.assignUserToTask(taskId, user);
     }
 
     @Override

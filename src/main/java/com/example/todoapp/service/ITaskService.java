@@ -1,6 +1,7 @@
 package com.example.todoapp.service;
 
 import com.example.todoapp.entity.Task;
+import com.example.todoapp.entity.User;
 
 import java.util.List;
 
@@ -16,6 +17,6 @@ public interface ITaskService {
 
     void deleteTask(Long id);
 
-    Task assignUserToTask(Long taskId, Long userId);
+    Task assignUserToTask(Long taskId, User user);
 
 }

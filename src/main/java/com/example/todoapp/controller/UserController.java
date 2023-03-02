@@ -60,7 +60,7 @@ public class UserController {
 
     @PostMapping("/{userId}/task")
     public ResponseEntity<String> addTaskToUser(@PathVariable("userId") Long userId, @RequestBody Task task) {
-        userService.addTaskToUser(userId, task); // TODO tightly coupled method, fix later
+        userService.addTaskToUser(userId, task);
         return ResponseEntity.ok("Task added successfully");
     }
 

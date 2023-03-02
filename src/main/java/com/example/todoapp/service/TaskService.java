@@ -11,14 +11,13 @@ import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.TaskRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TaskService implements ITaskService {
 
     private final TaskRepository taskRepository;
-    private final IUserService userService;
 
     @Override
     public Task addTask(Task task) { // TODO, instead of Task in parameter, use DTO for validation
@@ -54,9 +53,8 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public Task assignUserToTask(Long taskId, Long userId) {
+    public Task assignUserToTask(Long taskId, User user) {
         Task task = getTaskById(taskId);
-        User user = userService.getUser(userId);
 
         task.setOwner(user);
         taskRepository.save(task);

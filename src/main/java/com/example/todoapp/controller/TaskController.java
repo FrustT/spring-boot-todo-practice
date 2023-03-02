@@ -16,48 +16,40 @@ import com.example.todoapp.model.responses.TaskResponse;
 @AllArgsConstructor
 public class TaskController {
 
-    private ITaskService taskService;
+        private ITaskService taskService;
 
-    @GetMapping
-    public ResponseEntity<List<TaskResponse>> getTasks() {
-        return ResponseEntity.ok(
-                TaskResponse.from(
-                        taskService.listTasks()));
-    }
+        @GetMapping
+        public ResponseEntity<List<TaskResponse>> getTasks() {
+                return ResponseEntity.ok(
+                                TaskResponse.from(
+                                                taskService.listTasks()));
+        }
 
-    @GetMapping("{id}")
-    public ResponseEntity<TaskResponse> getTask(@PathVariable Long id) {
-        return ResponseEntity.ok(
-                new TaskResponse(
-                        taskService.getTask(id)));
-    }
+        @GetMapping("{id}")
+        public ResponseEntity<TaskResponse> getTask(@PathVariable Long id) {
+                return ResponseEntity.ok(
+                                new TaskResponse(
+                                                taskService.getTask(id)));
+        }
 
-    @PostMapping
-    public ResponseEntity<TaskResponse> addTask(@RequestBody Task task) {
-        return ResponseEntity.status(201).body(
-                new TaskResponse(
-                        taskService.addTask(task)));
-    }
+        @PostMapping
+        public ResponseEntity<TaskResponse> addTask(@RequestBody Task task) {
+                return ResponseEntity.status(201).body(
+                                new TaskResponse(
+                                                taskService.addTask(task)));
+        }
 
-    @PutMapping("{id}") // TODO : should update route sends back entity model? or just a message?
-    public ResponseEntity<TaskResponse> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
-        return ResponseEntity.ok(
-                new TaskResponse(
-                        taskService.updateTask(id, task)));
-    }
+        @PutMapping("{id}") // TODO : should update route sends back entity model? or just a message?
+        public ResponseEntity<TaskResponse> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
+                return ResponseEntity.ok(
+                                new TaskResponse(
+                                                taskService.updateTask(id, task)));
+        }
 
-    @PutMapping("{taskId}/assign/{userId}")
-    public ResponseEntity<TaskResponse> assignUserToTask(@PathVariable("taskId") Long taskId,
-            @PathVariable("userId") Long userId) {
-        return ResponseEntity.ok(
-                new TaskResponse(
-                        taskService.assignUserToTask(taskId, userId)));
-    }
-
-    @DeleteMapping("{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
-        taskService.deleteTask(id);
-        return ResponseEntity.ok("Task deleted successfully");
-    }
+        @DeleteMapping("{id}")
+        public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
+                taskService.deleteTask(id);
+                return ResponseEntity.ok("Task deleted successfully");
+        }
 
 }
