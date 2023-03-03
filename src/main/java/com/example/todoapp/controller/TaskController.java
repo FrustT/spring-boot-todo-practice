@@ -3,47 +3,55 @@ package com.example.todoapp.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.todoapp.entity.Task;
 import com.example.todoapp.service.ITaskService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
+
+import com.example.todoapp.model.requests.task.TaskCreateRequest;
+import com.example.todoapp.model.requests.task.TaskUpdateRequest;
+import com.example.todoapp.model.responses.TaskResponse;
 
 @RestController
 @RequestMapping("api/v1/tasks")
 @AllArgsConstructor
 public class TaskController {
 
-    private ITaskService taskService;
+        private ITaskService taskService;
 
-    @GetMapping
-    public ResponseEntity<?> getTasks() {
-        return taskService.listTasks();
-    }
+        @GetMapping
+        public ResponseEntity<List<TaskResponse>> getTasks() {
+                return ResponseEntity.ok(
+                                TaskResponse.from(taskService.listTasks()));
+        }
 
-    @GetMapping("{id}")
-    public ResponseEntity<?> getTask(@PathVariable Long id) {
-        return taskService.getTask(id);
-    }
+        @GetMapping("{id}")
+        public ResponseEntity<TaskResponse> getTask(@PathVariable Long id) {
+                return ResponseEntity.ok(
+                                new TaskResponse(taskService.getTask(id)));
+        }
 
-    @PostMapping
-    public ResponseEntity<?> addTask(@RequestBody Task task) {
-        return taskService.addTask(task);
-    }
+        @PostMapping
+        public ResponseEntity<TaskResponse> addTask(@Valid @RequestBody TaskCreateRequest taskCreateRequest) {
 
-    @PutMapping("{id}")
-    public ResponseEntity<?> updateTask(@PathVariable("id") Long id, @RequestBody Task task) {
-        return taskService.updateTask(id, task);
-    }
+                return ResponseEntity.status(201).body(
+                                new TaskResponse(taskService.addTask(TaskCreateRequest.from(taskCreateRequest))));
+        }
 
-    @PutMapping("{taskId}/assign/{userId}")
-    public ResponseEntity<?> assignUserToTask(@PathVariable("taskId") Long taskId,
-            @PathVariable("userId") Long userId) {
-        return taskService.assignUserToTask(taskId, userId);
-    }
+        @PutMapping("{id}")
+        public ResponseEntity<TaskResponse> updateTask(@PathVariable("id") Long id,
+                        @Valid @RequestBody TaskUpdateRequest taskUpdateRequest) {
+                return ResponseEntity.ok(
+                                new TaskResponse(
+                                                taskService.updateTask(id, TaskUpdateRequest.from(taskUpdateRequest))));
+        }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteTask(@PathVariable("id") Long id) {
-        return taskService.deleteTask(id);
-    }
+        @DeleteMapping("{id}")
+        public ResponseEntity<String> deleteTask(@PathVariable("id") Long id) {
+                taskService.deleteTask(id);
+                return ResponseEntity.ok("Task deleted successfully");
+        }
 
 }

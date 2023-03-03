@@ -3,108 +3,92 @@ package com.example.todoapp.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.UserRepository;
+import com.example.todoapp.exception.BusinessException;
+import com.example.todoapp.model.logging.WarnLoggingContext;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final TaskService taskService;
 
     @Override
-    public ResponseEntity<?> getUsers() {
-        return ResponseEntity.ok(userRepository.findAll());
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<?> getUser(Long id) {
-        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
-        return ResponseEntity.ok(user);
+    public User getUser(Long id) {
+        return getUserById(id);
     }
 
     @Override
-    public ResponseEntity<?> getTasksOfUser(Long id) {
-        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
-
-        return ResponseEntity.ok(user.getTasks());
+    public List<Task> getTasksOfUser(Long id) {
+        User user = getUserById(id);
+        return user.getTasks();
     }
 
     @Override
-    public ResponseEntity<?> getTaskOfUser(Long userId, Long taskId) {
-        Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
-                                                                            // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
+    public Task getTaskOfUser(Long userId, Long taskId) { // TODO: YAGNI?
+
+        User user = getUserById(userId);
         List<Task> tasks = user.getTasks();
         for (Task task : tasks) {
             if (task.getId().equals(taskId)) {
-                return ResponseEntity.ok(task);
+                return task;
             }
         }
-        return ResponseEntity.status(404).body("Task not found");
+        log.warn(WarnLoggingContext.getContext("Task not found").toString());
+        throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
     @Override
-    public ResponseEntity<?> addUser(User user) {
+    public void addUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            return ResponseEntity.status(409).body("User already exists");
+            log.warn(WarnLoggingContext.getContext("User already exists").toString());
+            throw new BusinessException(HttpStatus.CONFLICT, "User already exists");
         }
-
         userRepository.save(user);
-        return ResponseEntity.ok("User has been added!");
     }
 
     @Override
-    public ResponseEntity<?> addTaskToUser(Long userId, Task task) { // taskservice checks if user exists (but
-                                                                     // validation could also added here)
-        taskService.addTask(task);
-        return taskService.assignUserToTask(task.getId(), userId);
+    public void addTaskToUser(Long userId, Task task) {
+        User user = getUserById(userId);
+        Task newTask = taskService.addTask(task);
+        taskService.assignUserToTask(newTask.getId(), user);
     }
 
     @Override
-    public ResponseEntity<?> updateUser(Long id, User user) {
-        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User oldUser = (User) responseFromDatabase.get();
+    public void assignTaskToUser(Long userId, Long taskId) {
+        User user = getUserById(userId);
+        taskService.assignUserToTask(taskId, user);
+    }
+
+    @Override
+    public void updateUser(Long id, User user) {
+
+        User oldUser = getUserById(id);
 
         oldUser.setName(user.getName());
         oldUser.setEmail(user.getEmail());
         oldUser.setPassword(user.getPassword());
         userRepository.save(oldUser);
-        return ResponseEntity.ok("User has been updated");
     }
 
     @Override
-    public ResponseEntity<?> updateTaskOfUser(Long userId, Long taskId, Task task) {
-        Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
-                                                                            // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
+    public void updateTaskOfUser(Long userId, Long taskId, Task task) {
+        User user = getUserById(userId);
 
         boolean taskFound = false;
         for (Task t : user.getTasks()) {
@@ -114,52 +98,41 @@ public class UserService implements IUserService {
             }
         }
         if (!taskFound) {
-            return ResponseEntity.status(404).body("User does not have this task");
+            log.warn(WarnLoggingContext.getContext("User does not have this task").toString());
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User does not have this task");
         }
-
         taskService.updateTask(taskId, task);
-        return ResponseEntity.ok("Task updated of user");
     }
 
     @Override
-    public ResponseEntity<?> deleteUser(Long id) {
+    public boolean deleteUser(Long id) { // returns false if user not found
         if (!userExistsById(id)) {
-            return ResponseEntity.status(404).body("User not found");
+            log.warn(WarnLoggingContext.getContext("User not found").toString());
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
         userRepository.deleteById(id);
-        return ResponseEntity.ok("Users Deleted.");
+        return true;
     }
 
     @Override
-    public ResponseEntity<?> deleteTasksOfUser(Long id) {
-        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
+    public void deleteTasksOfUser(Long id) {
+        User user = getUserById(id);
         user.getTasks().clear();
         userRepository.save(user);
-        return ResponseEntity.ok("Tasks of user deleted");
     }
 
     @Override
-    public ResponseEntity<?> deleteTaskOfUser(Long userId, Long taskId) {
-        Optional<?> responseFromDatabase = userRepository.findById(userId); // This assignment saves us from calling the
-                                                                            // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromDatabase.get();
+    public void deleteTaskOfUser(Long userId, Long taskId) {
+        User user = getUserById(userId);
         List<Task> tasks = user.getTasks();
         for (Task task : tasks) {
             if (task.getId().equals(taskId)) {
                 tasks.remove(task);
                 userRepository.save(user);
-                return ResponseEntity.ok("Task deleted of user");
             }
         }
-        return ResponseEntity.status(404).body("Task not found");
+        log.warn(WarnLoggingContext.getContext("Task not found").toString());
+        throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
     public boolean userExistsById(Long id) {
@@ -167,6 +140,13 @@ public class UserService implements IUserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).get();
+        Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
+                                                                        // database twice
+        if (responseFromDatabase.isEmpty()) {
+            log.warn(WarnLoggingContext.getContext("User not found").toString());
+            throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
+        }
+
+        return (User) responseFromDatabase.get();
     }
 }

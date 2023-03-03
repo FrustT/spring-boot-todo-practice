@@ -1,90 +1,75 @@
 package com.example.todoapp.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
+import org.springframework.http.HttpStatus;
+import com.example.todoapp.exception.BusinessException;
+import com.example.todoapp.model.logging.WarnLoggingContext;
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.TaskRepository;
-import com.example.todoapp.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Slf4j
 public class TaskService implements ITaskService {
 
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
 
     @Override
-    public ResponseEntity<?> addTask(Task task) {
-        taskRepository.save(task);
-        return ResponseEntity.ok("Task added successfully");
+    public Task addTask(Task task) {
+        return taskRepository.save(task);
     }
 
     @Override
-    public ResponseEntity<?> listTasks() {
-        return ResponseEntity.ok(taskRepository.findAll());
+    public List<Task> listTasks() {
+        return taskRepository.findAll();
     }
 
     @Override
-    public ResponseEntity<?> deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
+    public void deleteTask(Long id) {
+        getTaskById(id);
         taskRepository.deleteById(id);
-        return ResponseEntity.ok("Task deleted successfully");
     }
 
     @Override
-    public ResponseEntity<?> getTask(Long id) {
-        Optional<?> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
-        Task task = (Task) responseFromDatabase.get();
-        return ResponseEntity.ok(task);
+    public Task getTask(Long id) {
+        return getTaskById(id);
     }
 
     @Override
-    public ResponseEntity<?> updateTask(Long id, Task task) {
-        Optional<?> responseFromDatabase = taskRepository.findById(id); // This assignment saves us from calling the
-                                                                        // database twice
-        if (responseFromDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
-        Task oldTask = (Task) responseFromDatabase.get();
+    public Task updateTask(Long id, Task task) {
+        Task oldTask = getTaskById(id);
         oldTask.setTitle(task.getTitle());
         oldTask.setDescription(task.getDescription());
         oldTask.setCompleted(task.isCompleted());
         oldTask.setDueDate(task.getDueDate());
         oldTask.setCompletedDate(task.getCompletedDate());
-        taskRepository.save(oldTask);
-        return ResponseEntity.ok("Task updated successfully");
+
+        return taskRepository.save(oldTask);
     }
 
     @Override
-    public ResponseEntity<?> assignUserToTask(Long taskId, Long userId) {
-        Optional<?> responseFromTaskDatabase = taskRepository.findById(taskId); // This assignment saves us from calling
-                                                                                // the database twice
-        if (responseFromTaskDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("Task not found");
-        }
-        Task task = (Task) responseFromTaskDatabase.get();
+    public Task assignUserToTask(Long taskId, User user) {
+        Task task = getTaskById(taskId);
 
-        Optional<?> responseFromUserDatabase = userRepository.findById(userId); // This assignment saves us from calling
-                                                                                // the database twice
-        if (responseFromUserDatabase.isEmpty()) {
-            return ResponseEntity.status(404).body("User not found");
-        }
-        User user = (User) responseFromUserDatabase.get();
         task.setOwner(user);
         taskRepository.save(task);
-        return ResponseEntity.ok("User assigned to task successfully");
+        return task;
+    }
+
+    public Task getTaskById(Long id) {
+        Optional<Task> responseFromDatabase = taskRepository.findById(id);
+        if (responseFromDatabase.isEmpty()) {
+            log.warn(WarnLoggingContext.getContext("Task not found").toString());
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
+        }
+        return responseFromDatabase.get();
     }
 
 }

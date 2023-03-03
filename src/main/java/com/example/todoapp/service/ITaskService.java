@@ -1,21 +1,22 @@
 package com.example.todoapp.service;
 
-import org.springframework.http.ResponseEntity;
-
 import com.example.todoapp.entity.Task;
+import com.example.todoapp.entity.User;
+
+import java.util.List;
 
 public interface ITaskService {
 
-    ResponseEntity<?> listTasks();
+    List<Task> listTasks();
 
-    ResponseEntity<?> getTask(Long id);
+    Task getTask(Long id);
 
-    ResponseEntity<?> addTask(Task task);
+    Task addTask(Task task);
 
-    ResponseEntity<?> updateTask(Long id, Task task);
+    Task updateTask(Long id, Task task);
 
-    ResponseEntity<?> deleteTask(Long id);
+    void deleteTask(Long id);
 
-    ResponseEntity<?> assignUserToTask(Long taskId, Long userId);
+    Task assignUserToTask(Long taskId, User user);
 
 }

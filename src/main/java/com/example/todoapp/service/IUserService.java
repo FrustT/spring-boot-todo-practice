@@ -3,31 +3,33 @@ package com.example.todoapp.service;
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 
-import org.springframework.http.ResponseEntity;
+import java.util.List;
 
 public interface IUserService {
 
-    ResponseEntity<?> getUsers();
+    List<User> getUsers();
 
-    ResponseEntity<?> getUser(Long id);
+    User getUser(Long id);
 
-    ResponseEntity<?> getTasksOfUser(Long id);
+    List<Task> getTasksOfUser(Long id);
 
-    ResponseEntity<?> getTaskOfUser(Long userId, Long taskId);
+    Task getTaskOfUser(Long userId, Long taskId);
 
-    ResponseEntity<?> addTaskToUser(Long userId, Task task);
+    void addTaskToUser(Long userId, Task task);
 
-    ResponseEntity<?> addUser(User user);
+    void assignTaskToUser(Long userId, Long taskId);
 
-    ResponseEntity<?> updateUser(Long id, User user);
+    void addUser(User user);
 
-    ResponseEntity<?> updateTaskOfUser(Long userId, Long taskId, Task task);
+    void updateUser(Long id, User user);
 
-    ResponseEntity<?> deleteUser(Long id);
+    void updateTaskOfUser(Long userId, Long taskId, Task task);
 
-    ResponseEntity<?> deleteTasksOfUser(Long id);
+    boolean deleteUser(Long id);
 
-    ResponseEntity<?> deleteTaskOfUser(Long userId, Long taskId);
+    void deleteTasksOfUser(Long id);
+
+    void deleteTaskOfUser(Long userId, Long taskId);
 
     boolean userExistsById(Long id);
 

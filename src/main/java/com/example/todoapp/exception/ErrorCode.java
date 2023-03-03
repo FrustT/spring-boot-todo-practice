@@ -3,7 +3,6 @@ package com.example.todoapp.exception;
 public enum ErrorCode {
 
     UNKNOWN(400),
-    VALIDATION(422),
     UNAUTHORIZED(401),
     FORBIDDEN(403),
     RESOURCE_MISSING(404),
@@ -17,7 +16,8 @@ public enum ErrorCode {
     ALREADY_ONBOARDED(409),
     INSUFFICENT_BALANCE(409),
     CONFLICT(409),
-    ALREADY_SUBMITTED(409);
+    ALREADY_SUBMITTED(409),
+    VALIDATION(422);
 
     private final int httpCode;
 
