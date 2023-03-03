@@ -28,7 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public Authentication claimsToAuthentication(Jws<Claims> jws){
+    public Authentication claimsToAuthentication(Jws<Claims> jws) {
+        if (jws == null)
+            return null;
         String email = jws.getBody().getSubject(); // email
         User user = userRepository.findByEmail(email);
         return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

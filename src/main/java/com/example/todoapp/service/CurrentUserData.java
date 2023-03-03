@@ -15,7 +15,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 public class CurrentUserData {
-
     private User user;
 
     public CurrentUserData() {
