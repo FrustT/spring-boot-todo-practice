@@ -6,21 +6,23 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import com.example.todoapp.exception.BusinessException;
-
+import com.example.todoapp.model.logging.WarnLoggingContext;
 import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.TaskRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TaskService implements ITaskService {
 
     private final TaskRepository taskRepository;
 
     @Override
-    public Task addTask(Task task) { // TODO, instead of Task in parameter, use DTO for validation
+    public Task addTask(Task task) {
         return taskRepository.save(task);
     }
 
@@ -43,7 +45,7 @@ public class TaskService implements ITaskService {
     @Override
     public Task updateTask(Long id, Task task) {
         Task oldTask = getTaskById(id);
-        oldTask.setTitle(task.getTitle()); // TODO : what if user sends null? it will override existing data
+        oldTask.setTitle(task.getTitle());
         oldTask.setDescription(task.getDescription());
         oldTask.setCompleted(task.isCompleted());
         oldTask.setDueDate(task.getDueDate());
@@ -64,6 +66,7 @@ public class TaskService implements ITaskService {
     public Task getTaskById(Long id) {
         Optional<Task> responseFromDatabase = taskRepository.findById(id);
         if (responseFromDatabase.isEmpty()) {
+            log.warn(WarnLoggingContext.getContext("Task not found").toString());
             throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
         }
         return responseFromDatabase.get();

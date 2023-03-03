@@ -12,6 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.todoapp.model.logging.InfoLoggingContext;
+
 import java.io.IOException;
 
 @Component
@@ -28,9 +30,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authorizationHeader = request.getHeader("Authorization");
         Authentication authentication = jwtService.verifyAuthHeader(authorizationHeader);
-        if (authentication != null)
+        if (authentication != null) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            log.info(InfoLoggingContext.getContext("Authentication Successful").toString());
+        }
         filterChain.doFilter(request, response);
     }
 }

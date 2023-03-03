@@ -6,7 +6,6 @@ import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 import com.example.todoapp.model.responses.ErrorModel;
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.ResponseEntity;

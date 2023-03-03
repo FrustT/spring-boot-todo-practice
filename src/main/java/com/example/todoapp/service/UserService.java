@@ -8,13 +8,16 @@ import com.example.todoapp.entity.Task;
 import com.example.todoapp.entity.User;
 import com.example.todoapp.repository.UserRepository;
 import com.example.todoapp.exception.BusinessException;
+import com.example.todoapp.model.logging.WarnLoggingContext;
 
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
@@ -46,12 +49,14 @@ public class UserService implements IUserService {
                 return task;
             }
         }
+        log.warn(WarnLoggingContext.getContext("Task not found").toString());
         throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
     @Override
     public void addUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
+            log.warn(WarnLoggingContext.getContext("User already exists").toString());
             throw new BusinessException(HttpStatus.CONFLICT, "User already exists");
         }
         userRepository.save(user);
@@ -92,16 +97,19 @@ public class UserService implements IUserService {
                 break;
             }
         }
-        if (!taskFound)
+        if (!taskFound) {
+            log.warn(WarnLoggingContext.getContext("User does not have this task").toString());
             throw new BusinessException(HttpStatus.NOT_FOUND, "User does not have this task");
-
+        }
         taskService.updateTask(taskId, task);
     }
 
     @Override
     public boolean deleteUser(Long id) { // returns false if user not found
-        if (!userExistsById(id))
+        if (!userExistsById(id)) {
+            log.warn(WarnLoggingContext.getContext("User not found").toString());
             throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
+        }
         userRepository.deleteById(id);
         return true;
     }
@@ -123,6 +131,7 @@ public class UserService implements IUserService {
                 userRepository.save(user);
             }
         }
+        log.warn(WarnLoggingContext.getContext("Task not found").toString());
         throw new BusinessException(HttpStatus.NOT_FOUND, "Task not found");
     }
 
@@ -134,6 +143,7 @@ public class UserService implements IUserService {
         Optional<?> responseFromDatabase = userRepository.findById(id); // This assignment saves us from calling the
                                                                         // database twice
         if (responseFromDatabase.isEmpty()) {
+            log.warn(WarnLoggingContext.getContext("User not found").toString());
             throw new BusinessException(HttpStatus.NOT_FOUND, "User not found");
         }
 
