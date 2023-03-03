@@ -1,3 +1,20 @@
+# Features
+
+- Authentication (JWT)
+- Authorization
+- Bidirectional Relationship
+- DTO
+- Validation
+- Exception Handler
+- Swagger openAPI("/swagger-ui.html")
+- /me route
+
+
+## Refactoring Steps
+- hiding stacktrace on error responses 
+- invalid post request shows details of the system
+- in controllers, no need to specify ResponseEntity.ok(..
+
 ## Project Steps
 
 - [x] Task Controller
@@ -12,12 +29,11 @@
 - [x] Authentication is completed
 - [x] Authorization init (permits all routes for now)
 - [x] Register endpoint
-- [ ] ModelMapper
-- [ ] Auth has been simplyfied
-- [ ] Services has been simplyfied
-- [ ] Controllers has been simplyfied
-- [ ] Global ControllerAdvice for exceptions
-- [ ] Index controller?
+- [x] Auth has been simplyfied
+- [x] Services has been simplyfied
+- [x] Controllers has been simplyfied
+- [x] Global ControllerAdvice for exceptions
+- [x] Index controller
 - [ ] Secret keys config 
 
 
