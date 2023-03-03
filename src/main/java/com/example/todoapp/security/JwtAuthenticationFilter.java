@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.example.todoapp.service.CurrentUserData;
+import com.example.todoapp.service.CurrentUserService;
 
 import com.example.todoapp.model.logging.InfoLoggingContext;
 

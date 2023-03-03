@@ -24,6 +24,6 @@ public class WarnLoggingContext {
 
     @Override
     public String toString() {
-        return "Warn(timestamp=" + this.getTimestamp() + " + this.getMessage() " + this.getMessage() + ")";
+        return "Warn(timestamp= " + this.getTimestamp() + "message=" + this.getMessage();
     }
 }
