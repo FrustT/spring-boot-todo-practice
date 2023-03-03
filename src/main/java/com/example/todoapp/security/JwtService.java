@@ -38,36 +38,23 @@ public class JwtService {
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * EXPIRE_HOURS))
-                .claim("role", user.getRole()) // extra claim
                 .compact();
     }
 
     /**
-     * Takes token from Bearer header and returns Authentication object.
+     * Takes token from Bearer header and returns Jws parsed claims.
      * 
      * @param authHeader whole header like "Bearer eyJhbGciOiJ.."
-     * @return Authentication object or null if failed
+     * @return Jws Parsed Claims
      */
-    public Authentication verifyAuthHeader(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer "))
-            return null;
+    public Jws<Claims> verifyAuthHeader(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
+
         String token = authHeader.substring(7);
 
-        try {
-            Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(getSigningKey())
-                    .build()
-                    .parseClaimsJws(token);
-
-            String subject = jws.getBody().getSubject();
-            String role = jws.getBody().get("role", String.class);
-            Collection<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-            return new UsernamePasswordAuthenticationToken(subject, role, authorities);
-
-        } catch (Exception e) { // TODO : Can we catch this with controllerAdvice ?
-            log.error(e.getMessage());
-        }
-
-        return null; // TODO later
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
     }
 }
